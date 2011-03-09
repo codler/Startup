@@ -14,5 +14,14 @@ class SU_Core {
 		$reflection = new ReflectionClass('SU_' . $name);
 		return $reflection->newInstanceArgs($arguments);
     }
+	
+	public static function view($file, $data=null) {
+		if (is_array($data)) {
+			extract($data);
+		}
+		if (file_exists(BASE_DIR . 'views/' . $file)) {
+			require(BASE_DIR . 'views/' . $file);
+		}
+	}
 }
 ?>

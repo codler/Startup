@@ -10,7 +10,6 @@ defined('SU_ROUTE_REQUEST_PATH') or define('SU_ROUTE_REQUEST_PATH', a::first(exp
 
 class SU_Route {
 	function __construct($route, $callback) {
-		echo "construct";
 		$base_host = c::get('route.base.host');
 		$base_path = str_replace(c::get('route.base.path', '/'), '', SU_ROUTE_REQUEST_PATH);
 		
