@@ -1,7 +1,7 @@
 <?php 
 
-defined('SU_URL_HOST') or define('SU_URL_HOST', 2);
-defined('SU_URL_SUB_HOST') or define('SU_URL_SUB_HOST', 3);
+defined('SU_URL_HOST') or define('SU_URL_HOST', 1);
+defined('SU_URL_SUB_HOST') or define('SU_URL_SUB_HOST', 2);
 
 defined('SU_ROUTE_HOST') or define('SU_ROUTE_HOST', (stripos(server::get('HTTP_HOST'), 'www.') === 0) ? substr(server::get('HTTP_HOST'), 4) : server::get('HTTP_HOST'));
 defined('SU_ROUTE_SUB_HOST') or define('SU_ROUTE_SUB_HOST', a::first(explode('.', SU_ROUTE_HOST)));

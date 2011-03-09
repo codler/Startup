@@ -69,7 +69,17 @@ class SU_Form {
 		$attr = array_merge($this->default_attr, $attr);
 		return "<input" . $this->parse_attr($attr) . "/>\r\n";
 	}
-		
+	
+	function set_message($id, $message, $type) {
+		c::set('form.message.' . $id, compact('type', 'message'));
+	}
+	
+	function message($id) {
+		if ($msg = c::get('form.message.' . $id, false)) {
+			return "<span class=\"" . $msg['type'] . "\">" . $msg['message'] . "</span>\r\n";
+		}
+	}
+	
 	// TODO move to UI class
 	public $only_attr = array('autofocus', 'checked', 'disabled', 'multiple', 'novalidate', 'required', 'selected');
 	function parse_attr($array) {

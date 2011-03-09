@@ -4,17 +4,28 @@ require_once(dirname(__file__) . '/startup.php');
 #SU::Ui()->add_external('hej.js', 'js');
 
 SU::Route(array(SU_URL_HOST, ''), function($host, $path) {
-	if (isset($_POST)) {
+	#if (isset($_POST)) {
 		if (SU::Form()->verify('login')) {
-			
+			if (SU::User()->login()) {
+				echo "Login success";
+			} else {
+				SU::Form()->set_message(SU::User()->identity, 'Login failed', 'error');
+			}
 		}
+	#}
+	
+	$data = '';
+	
+	if ($id = s::get('user.id', false)) {
+		$data .= 'Logged in as '. $id;
 	}
 	
-	$data = SU::Form()->open('login');
+	$data .= SU::Form()->open('login');
+	$data .= SU::Form()->message(SU::User()->identity);
 	$data .= SU::Form()->label('Epost', 'email');
-	$data .= SU::Form()->email('email', array('id'=>'email', 'placeholder'=>'E-postadress', 'required'));
+	$data .= SU::Form()->email(SU::User()->identity, array('id'=>'email', 'placeholder'=>'E-postadress', 'required'));
 	$data .= SU::Form()->label('Lösenord', 'password');
-	$data .= SU::Form()->password('password', array('id'=>'password', 'placeholder'=>'Lösenord'));
+	$data .= SU::Form()->password(SU::User()->password, array('id'=>'password', 'placeholder'=>'Lösenord'));
 	$data .= SU::Form()->submit('submit', 'Logga in');
 	$data .= SU::Form()->close();
 	
