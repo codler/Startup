@@ -23,8 +23,11 @@ if (file_exists(SU_BASE_DIR . 'libs/kirby/kirby.php')) {
 	require_once(SU_BASE_DIR . 'libs/kirby/kirby.php');
 }
 
+// Start session
+s::start();
+
 // Preload class
-$preload = array('route');
+$preload = array('route', 'user');
 array_map(SU_autoload, $preload);
 
 // Nonce class

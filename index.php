@@ -4,21 +4,33 @@ require_once(dirname(__file__) . '/startup.php');
 #SU::Ui()->add_external('hej.js', 'js');
 
 SU::Route(array(SU_URL_HOST, ''), function($host, $path) {
+	
 	#if (isset($_POST)) {
 		if (SU::Form()->verify('login')) {
 			if (SU::User()->login()) {
-				echo "Login success";
+				SU::Form()->set_message(SU::User()->identity, 'Login success', 'success');
 			} else {
 				SU::Form()->set_message(SU::User()->identity, 'Login failed', 'error');
+			}
+		}
+		
+		if (SU::Form()->verify('register')) {
+			if (SU::User()->register()) {
+				SU::Form()->set_message(SU::User()->identity, 'Register success', 'success');
+			} else {
+				#SU::Form()->set_message(SU::User()->identity, 'Register failed', 'error');
 			}
 		}
 	#}
 	
 	$data = '';
 	
-	if ($id = s::get('user.id', false)) {
+	if ($id = s::get('user.id')) {
 		$data .= 'Logged in as '. $id;
+		$data .= '<a href="http://' . $host . '/logout">Logout</a>';
 	}
+	
+	// login form
 	$form = SU::Form();
 	$form->open('login');
 	$form->message(SU::User()->identity);
@@ -28,8 +40,23 @@ SU::Route(array(SU_URL_HOST, ''), function($host, $path) {
 	$form->password(SU::User()->password, array('id'=>'password', 'placeholder'=>'Lösenord'));
 	$form->submit('submit', 'Logga in');
 	$form->close();
+		
+	// register form
+	$form = SU::Form();
+	$form->open('register');
+	$form->message(SU_USER_REGISTER_IDENTITY);
+	$form->label('Epost', 'email2');
+	$form->email(SU::User()->identity, array('id'=>'email2', 'placeholder'=>'E-postadress', 'required'));
+	$form->message(SU_USER_REGISTER_PASSWORD);
+	$form->label('Lösenord', 'password2');
+	$form->password(SU::User()->password, array('id'=>'password2', 'placeholder'=>'Lösenord'));
+	$form->label('igen', 'password3');
+	$form->password('password3', array('id'=>'password3', 'placeholder'=>'Lösenord igen'));
+	$form->submit('submit', 'Registrera');
+	$form->close();
 	
-	$form->open('login');
+	// test form
+	$form->open('test');
 	$form->label('Meddelande', 'message');
 	$form->textarea('message', array('id'=>'message', 'placeholder'=>'Meddelande', 'required'));
 	$form->label('Radio1', 'radio1');
@@ -47,6 +74,11 @@ SU::Route(array(SU_URL_HOST, ''), function($host, $path) {
 	
 	$page = array('page' => 'main.php', 'data'=> $data);
 	SU::view('tpl.php', $page);
+});
+
+SU::Route(array(SU_URL_HOST, 'logout'), function($host, $path) {
+	s::destroy();
+	go('http://' . $host);
 });
 
 SU::Route(array(SU_URL_HOST, 'login'), function($host, $path) {
