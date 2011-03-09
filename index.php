@@ -19,29 +19,31 @@ SU::Route(array(SU_URL_HOST, ''), function($host, $path) {
 	if ($id = s::get('user.id', false)) {
 		$data .= 'Logged in as '. $id;
 	}
+	$form = SU::Form();
+	$form->open('login');
+	$form->message(SU::User()->identity);
+	$form->label('Epost', 'email');
+	$form->email(SU::User()->identity, array('id'=>'email', 'placeholder'=>'E-postadress', 'required'));
+	$form->label('Lösenord', 'password');
+	$form->password(SU::User()->password, array('id'=>'password', 'placeholder'=>'Lösenord'));
+	$form->submit('submit', 'Logga in');
+	$form->close();
 	
-	$data .= SU::Form()->open('login');
-	$data .= SU::Form()->message(SU::User()->identity);
-	$data .= SU::Form()->label('Epost', 'email');
-	$data .= SU::Form()->email(SU::User()->identity, array('id'=>'email', 'placeholder'=>'E-postadress', 'required'));
-	$data .= SU::Form()->label('Lösenord', 'password');
-	$data .= SU::Form()->password(SU::User()->password, array('id'=>'password', 'placeholder'=>'Lösenord'));
-	$data .= SU::Form()->submit('submit', 'Logga in');
-	$data .= SU::Form()->close();
+	$form->open('login');
+	$form->label('Meddelande', 'message');
+	$form->textarea('message', array('id'=>'message', 'placeholder'=>'Meddelande', 'required'));
+	$form->label('Radio1', 'radio1');
+	$form->radio('radio', array('id'=>'radio1'));
+	$form->label('Radio2', 'radio2');
+	$form->radio('radio', array('id'=>'radio2'));
+	$form->label('Checkbox1', 'checkbox1');
+	$form->checkbox('checkbox', array('id'=>'checkbox1'));
+	$form->label('Checkbox2', 'checkbox2');
+	$form->checkbox('checkbox', array('id'=>'checkbox2'));
+	$form->submit('submit', 'Knapp');
+	$form->close();
 	
-	$data .= SU::Form()->open('login');
-	$data .= SU::Form()->label('Meddelande', 'message');
-	$data .= SU::Form()->textarea('message', array('id'=>'message', 'placeholder'=>'Meddelande', 'required'));
-	$data .= SU::Form()->label('Radio1', 'radio1');
-	$data .= SU::Form()->radio('radio', array('id'=>'radio1'));
-	$data .= SU::Form()->label('Radio2', 'radio2');
-	$data .= SU::Form()->radio('radio', array('id'=>'radio2'));
-	$data .= SU::Form()->label('Checkbox1', 'checkbox1');
-	$data .= SU::Form()->checkbox('checkbox', array('id'=>'checkbox1'));
-	$data .= SU::Form()->label('Checkbox2', 'checkbox2');
-	$data .= SU::Form()->checkbox('checkbox', array('id'=>'checkbox2'));
-	$data .= SU::Form()->submit('submit', 'Knapp');
-	$data .= SU::Form()->close();
+	$data .= $form->render();
 	
 	$page = array('page' => 'main.php', 'data'=> $data);
 	SU::view('tpl.php', $page);

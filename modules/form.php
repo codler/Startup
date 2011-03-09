@@ -1,6 +1,8 @@
 <?php 
 
 class SU_Form {
+	// HTML buffer
+	public static $html = '';
 	
 	// PARAMETER
 	// field [,value [, attr]]
@@ -32,7 +34,7 @@ class SU_Form {
 		$attr['action'] = $location;
 		$attr['method'] = $method;
 		$attr = array_merge($this->default_attr, $attr);
-		$html = "<form" . $this->parse_attr($attr) . ">\r\n";
+		self::$html .= $html = "<form" . $this->parse_attr($attr) . ">\r\n";
 		$html .= $this->hidden('_su_type', $name);
 		$html .= $this->hidden('_su_nonce', $nonce);
 		return $html;
@@ -44,7 +46,8 @@ class SU_Form {
 	}
 	
 	function close() {
-		return "</form>\r\n";
+		self::$html .= $html = "</form>\r\n";
+		return $html;
 	}
 	
 	function label($value, $id=null, $attr=array()) {
@@ -52,7 +55,8 @@ class SU_Form {
 		if ($id) {
 			$attr['for']=$id;
 		}
-		return "<label" . $this->parse_attr($attr) . ">" . $value . "</label>\r\n";
+		self::$html .= $html = "<label" . $this->parse_attr($attr) . ">" . $value . "</label>\r\n";
+		return $html;
 	}
 	
 	function textarea($field, $value=null, $attr=array()) {
@@ -62,12 +66,14 @@ class SU_Form {
 		}
 		$attr = array_merge($this->default_attr, $attr);
 		$attr['name'] = $field;
-		return "<textarea" . $this->parse_attr($attr) . ">" . $value . "</textarea>\r\n";
+		self::$html .= $html = "<textarea" . $this->parse_attr($attr) . ">" . $value . "</textarea>\r\n";
+		return $html;
 	}
 	
 	function input($attr) {
 		$attr = array_merge($this->default_attr, $attr);
-		return "<input" . $this->parse_attr($attr) . "/>\r\n";
+		self::$html .= $html = "<input" . $this->parse_attr($attr) . "/>\r\n";
+		return $html;
 	}
 	
 	function set_message($id, $message, $type) {
@@ -76,8 +82,15 @@ class SU_Form {
 	
 	function message($id) {
 		if ($msg = c::get('form.message.' . $id, false)) {
-			return "<span class=\"" . $msg['type'] . "\">" . $msg['message'] . "</span>\r\n";
+			self::$html .= $html = "<span class=\"" . $msg['type'] . "\">" . $msg['message'] . "</span>\r\n";
+			return $html;
 		}
+	}
+	
+	function render() {
+		$html = self::$html;
+		self::$html = '';
+		return $html;
 	}
 	
 	// TODO move to UI class
