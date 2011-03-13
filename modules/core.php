@@ -19,7 +19,8 @@ class SU_Core {
 		if (is_array($data)) {
 			extract($data);
 		}
-		if (file_exists(BASE_DIR . 'views/' . $file)) {
+		if (file_exists(BASE_DIR . 'views/' . $file) &&
+			is_file(BASE_DIR . 'views/' . $file)) {
 			content::start();
 			require(BASE_DIR . 'views/' . $file);
 			return content::end($return);

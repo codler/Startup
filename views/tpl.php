@@ -30,6 +30,9 @@ jQuery(function ($) {
 </head>
 <body>
 <!--[if lt IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;'> <a href="http://www.microsoft.com/windows/internet-explorer/default.aspx?ocid=ie6_countdown_bannercode"><img src="http://www.theie6countdown.com/images/upgrade.jpg" border="0" height="42" width="820" alt="" /></a></div> <![endif]-->
-<?php SU::view($page, $data); ?>
+<?php 
+echo $html;
+SU::view($page, $data); 
+?>
 </body>
 </html>

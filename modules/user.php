@@ -1,7 +1,5 @@
 <?php
 
-defined('ERROR_USERNAME_INVALID') or define('ERROR_USERNAME_INVALID', 1);
-
 defined('USER_IDENTITY') or define('USER_IDENTITY', '_su_identity');
 defined('USER_PASSWORD') or define('USER_PASSWORD', '_su_password');
 
@@ -30,8 +28,6 @@ if (!function_exists('get_facebook_cookie')) {
 }
 
 class SU_User {
-	public static $error_code = 10;
-
 	public $identity;
 	public $password;
 	
@@ -79,7 +75,6 @@ class SU_User {
 			s::set('user.id', $user_id);
 			return true;
 		} else {
-			s::set('error.login', ERROR_USERNAME_INVALID);
 			return false;
 		}
 	}
@@ -91,10 +86,7 @@ class SU_User {
 			s::remove('user_id');
 		}
 	}
-	
-	public function get_error_code() {
-		return self::$error_code;
-	}
 }
+
 
 ?>

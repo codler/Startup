@@ -27,7 +27,7 @@ if (file_exists(SU_BASE_DIR . 'libs/kirby/kirby.php')) {
 s::start();
 
 // Preload class
-$preload = array('route', 'user');
+$preload = array('security', 'route', 'user');
 array_map(SU_autoload, $preload);
 
 // Nonce class
@@ -36,4 +36,6 @@ if (file_exists(SU_BASE_DIR . 'libs/nonce.class.php')) {
 }
 
 spl_autoload_register('SU_autoload');
+@header('X-Powered-By: https://github.com/codler/Startup');
+content::start();
 ?>

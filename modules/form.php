@@ -101,7 +101,8 @@ class SU_Form {
 			if (is_numeric($attr) && in_array($value, $this->only_attr)) {
 				$html .= $value . ' ';
 			} else {
-				$html .= $attr . '="' . $value . '" ';
+				// htmlspecialchars for anti-XSS
+				$html .= $attr . '="' . htmlspecialchars($value) . '" ';
 			}
 		}
 		return $html;

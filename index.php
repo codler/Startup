@@ -1,61 +1,20 @@
 <?php 
 require_once(dirname(__file__) . '/startup.php');
 
+// Add an external resourse such as js or css file.
 #SU::Ui()->add_external('hej.js', 'js');
 
 SU::Route(array(SU_URL_HOST, ''), function($host, $path) {
-	
-	#if (isset($_POST)) {
-		if (SU::Form()->verify('login')) {
-			if (SU::User()->login()) {
-				SU::Form()->set_message(SU::User()->identity, 'Login success', 'success');
-			} else {
-				SU::Form()->set_message(SU::User()->identity, 'Login failed', 'error');
-			}
-		}
-		
-		if (SU::Form()->verify('register')) {
-			if (SU::User()->register()) {
-				SU::Form()->set_message(SU::User()->identity, 'Register success', 'success');
-			} else {
-				#SU::Form()->set_message(SU::User()->identity, 'Register failed', 'error');
-			}
-		}
-	#}
-	
-	$data = '';
-	
 	if ($id = s::get('user.id')) {
 		$data .= 'Logged in as '. $id;
 		$data .= '<a href="http://' . $host . '/logout">Logout</a>';
+	} else {
+		$data .= '<a href="http://' . $host . '/login">Login</a>';
+		$data .= '<a href="http://' . $host . '/register">Register</a>';
 	}
 	
-	// login form
-	$form = SU::Form();
-	$form->open('login');
-	$form->message(SU::User()->identity);
-	$form->label('Epost', 'email');
-	$form->email(SU::User()->identity, array('id'=>'email', 'placeholder'=>'E-postadress', 'required'));
-	$form->label('Lösenord', 'password');
-	$form->password(SU::User()->password, array('id'=>'password', 'placeholder'=>'Lösenord'));
-	$form->submit('submit', 'Logga in');
-	$form->close();
-		
-	// register form
-	$form = SU::Form();
-	$form->open('register');
-	$form->message(SU_USER_REGISTER_IDENTITY);
-	$form->label('Epost', 'email2');
-	$form->email(SU::User()->identity, array('id'=>'email2', 'placeholder'=>'E-postadress', 'required'));
-	$form->message(SU_USER_REGISTER_PASSWORD);
-	$form->label('Lösenord', 'password2');
-	$form->password(SU::User()->password, array('id'=>'password2', 'placeholder'=>'Lösenord'));
-	$form->label('igen', 'password3');
-	$form->password('password3', array('id'=>'password3', 'placeholder'=>'Lösenord igen'));
-	$form->submit('submit', 'Registrera');
-	$form->close();
-	
 	// test form
+	$form = SU::Form();
 	$form->open('test');
 	$form->label('Meddelande', 'message');
 	$form->textarea('message', array('id'=>'message', 'placeholder'=>'Meddelande', 'required'));
@@ -71,56 +30,132 @@ SU::Route(array(SU_URL_HOST, ''), function($host, $path) {
 	$form->close();
 	
 	$data .= $form->render();
-	
 	$page = array('page' => 'main.php', 'data'=> $data);
 	SU::view('tpl.php', $page);
 });
 
+
+// Example: Register
+SU::Route(array(SU_URL_HOST, 'register'), function($host, $path) {
+	if (SU::Form()->verify('register')) {
+		if (SU::User()->register()) {
+			SU::Form()->set_message(SU_USER_REGISTER_IDENTITY, 'Register success', 'success');
+		}
+	}
+
+	// register form
+	$form = SU::Form();
+	$form->open('register');
+	$form->message(SU_USER_REGISTER_IDENTITY);
+	$form->label('Epost', 'email2');
+	$form->email(SU::User()->identity, array('id'=>'email2', 'placeholder'=>'E-postadress', 'required'));
+	$form->message(SU_USER_REGISTER_PASSWORD);
+	$form->label('Lösenord', 'password2');
+	$form->password(SU::User()->password, array('id'=>'password2', 'placeholder'=>'Lösenord'));
+	$form->label('igen', 'password3');
+	$form->password('password3', array('id'=>'password3', 'placeholder'=>'Lösenord igen'));
+	$form->submit('submit', 'Registrera');
+	$form->close();
+	
+	$data = $form->render();
+	$page = array('page' => 'main.php', 'data'=> $data);
+	SU::view('tpl.php', $page);
+});
+
+// Example: Login
+SU::Route('login', function($host, $path) {
+	// Verify form
+	if (SU::Form()->verify('login')) {
+		// Try login
+		if (SU::User()->login()) {
+			// Set success login message
+			SU::Form()->set_message(SU_USER_LOGIN_IDENTITY, 'Login success', 'success');
+			
+			$base_host = c::get('route.base.host');
+			$redirect = r::get('redirect');
+			if (v::url($redirect) &&
+				// Compare end string
+				substr_compare(parse_url($redirect, PHP_URL_HOST), $base_host, -strlen($base_host), strlen($base_host)) === 0) {
+				go($redirect);
+			} else {
+				// Go to root
+				go(c::get('route.base.path'));
+			}
+		}
+	}
+
+	// login form
+	$form = SU::Form();
+	$form->open('login');
+	if (v::url(r::get('next'))) {
+		$form->hidden('redirect', r::get('next'));
+	}
+	$form->message(SU_USER_LOGIN_IDENTITY);
+	$form->label('Epost', 'email');
+	$form->email(SU::User()->identity, array('id'=>'email', 'placeholder'=>'E-postadress', 'required'));
+	$form->label('Lösenord', 'password');
+	$form->password(SU::User()->password, array('id'=>'password', 'placeholder'=>'Lösenord'));
+	$form->submit('submit', 'Logga in');
+	$form->close();
+	
+	$data = $form->render();
+	$page = array('page' => 'main.php', 'data'=> $data);
+	SU::view('tpl.php', $page);
+});
+
+// Example: Logout
 SU::Route(array(SU_URL_HOST, 'logout'), function($host, $path) {
 	s::destroy();
-	go('http://' . $host);
+	// Go to root
+	go(c::get('route.base.path'));
 });
 
-SU::Route(array(SU_URL_HOST, 'login'), function($host, $path) {
-	echo "main" . $host . $path;
+// Main domain
+SU::Route(array(SU_URL_HOST, 'maindomain'), function($host, $path) {
+	echo "Maindomain - " . $host . '/' . $path;
 });
 
-SU::Route(array(SU_URL_SUB_HOST, 'login'), function($host, $path) {
-	echo "sub" . $host . $path;
+// All subdomain
+SU::Route(array(SU_URL_SUB_HOST, 'subdomain'), function($host, $path) {
+	echo "Subdomain - " . $host . '/' . $path;
 }); 
 
+// "Wildcard route"
+SU::Route(array('unique', 'id/:id'), function($host, $path) {
+	echo "Path : " . $path; // Will print out eg. "Path : id/1"
+});
 
-SU::Route(array('*', 'all'), function($host, $path) {
-	echo "all" . $host . $path;
-}); 
+// Both are same page
+SU::Route(array('*', 'all'), function() {}); 
+SU::Route('all', function() {}); 
 
-SU::Route(array('spe', 'qw:id'), function($host, $path) {
-	echo "qw" . $host . $path; 
-}); 
-
-
-
-	/* if ($login) {
-		SU::User()->login($u, $p);
-	}
- */
-
-
-/* 
-class User_auth {
-	public $id;
-	public $additional_info = array();
-	public function authenticate($username, $password) {
-		return true;
+// Example: Protected page
+function access() {
+	if (!s::get('user.id')) {
+		$page = array('html' => 'Login required');
+		SU::view('tpl.php', $page);
+		return false;
 	}
 }
-//new SU();
-//SU::Core()->User->login('','');
+SU::Route('protected-page', access, function($host, $path) {
+	echo "Viewing a protected-page";
+});
 
-echo SU::User()->get_error_code();
+// Example: Protected page 2 with redirect back on success login
+function access2($host, $path) {
+	if (!s::get('user.id')) {
+		go('http://' . c::get('route.base.host') . '/login?next=' . urlencode(url::current()));
+		return false;
+	}
+}
+SU::Route('protected-page', access2, function($host, $path) {
+	echo "Viewing a protected-page";
+});
 
-$identity = new User_auth();
-if ($identity->authenticate('','')) {
-	//SU::User()->login($identity);
-} */
+// Custom 404 page
+SU::Route('404!', function($host, $path) {
+	echo "Page not found";
+});
+
+
 ?>

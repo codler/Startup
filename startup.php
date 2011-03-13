@@ -47,7 +47,12 @@ c::set('user.register.validate', function($u,$p) {
 	
 }); // Validate user register - return true or false
 c::set('user.login.validate', function($u,$p) {
-	return db::field('user', 'id', array('email' => $u, 'password' => $p));
+	$r = db::field('user', 'id', array('email' => $u, 'password' => $p));
+	if (!$r) {
+		// Set error login message
+		SU::Form()->set_message(SU_USER_LOGIN_IDENTITY, 'Login failed', 'error');
+	}
+	return $r;
 }); // Validate user logins - return id or false
 /*
 c::set('user.register.validate.fb', function($uid) {
