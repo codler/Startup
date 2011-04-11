@@ -66,4 +66,18 @@ c::set('user.form.identity', USER_IDENTITY); // Name of the inputfield
 c::set('user.form.password', USER_PASSWORD); // Name of the inputfield
 */
 
+c::set('user.login.validate.sso', function($uid, $info) {
+	// find user_id from uid, alt. register if not exist
+	$r = db::field('user_sso', 'user_id', array('provider' => $info['provider'], 'identity' => $uid));
+	if ($r) {
+		return $r;
+	} else {
+		// TODO validate if same user, email can be manipulated.
+		$r = db::field('user', 'id', array('email' => $info['contact/email']));
+		$id = ($r) ? $r : db::insert('user', array('email' => $info['contact/email']));
+		db::insert('user_sso', array('user_id' => $id, 'provider' => $info['provider'], 'identity' => $uid));
+		return $id;
+	}
+});
+
 ?>

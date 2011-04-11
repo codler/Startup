@@ -35,6 +35,11 @@ if (file_exists(SU_BASE_DIR . 'libs/nonce.class.php')) {
 	require_once(SU_BASE_DIR . 'libs/nonce.class.php');
 }
 
+// Single Sign On class
+if (file_exists(SU_BASE_DIR . 'libs/singlesignon/singlesignon.php')) {
+	require_once(SU_BASE_DIR . 'libs/singlesignon/singlesignon.php');
+}
+
 spl_autoload_register('SU_autoload');
 @header('X-Powered-By: https://github.com/codler/Startup');
 content::start();

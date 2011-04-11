@@ -18,8 +18,8 @@ class SU_Route {
 		$args = func_get_args();
 	
 		$base_host = c::get('route.base.host');
-		$base_path = str_replace(c::get('route.base.path', '/'), '', SU_ROUTE_REQUEST_PATH);
-		
+		#$base_path = str_replace(c::get('route.base.path', '/'), '', SU_ROUTE_REQUEST_PATH);
+		$base_path = substr(strstr(SU_ROUTE_REQUEST_PATH, c::get('route.base.path', '/')), strlen(c::get('route.base.path', '/')));
 		if (is_array($route)) {
 			$base = $route[0];
 			$path = $route[1];
@@ -33,9 +33,8 @@ class SU_Route {
 		}
 		
 		// replace for regex
-		$path = str_replace(array('/', ':id'), array('\/', '\d'), $path);
+		$path = str_replace(array('/', ':id'), array('\/', '\d+'), $path);
 		$path = '/^'.$path.'$/i';
-		
 		
 		// Main
 		if ($base === SU_URL_HOST) {

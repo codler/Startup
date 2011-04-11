@@ -84,7 +84,7 @@ SU::Route('login', function($host, $path) {
 		}
 	}
 
-	// login form
+	/* // login form
 	$form = SU::Form();
 	$form->open('login');
 	if (v::url(r::get('next'))) {
@@ -98,9 +98,35 @@ SU::Route('login', function($host, $path) {
 	$form->submit('submit', 'Logga in');
 	$form->close();
 	
-	$data = $form->render();
+	$data = $form->render(); */
+	$data = SU::view('login.php', null, true);
 	$page = array('page' => 'main.php', 'data'=> $data);
 	SU::view('tpl.php', $page);
+});
+
+// Example: Login continue
+SU::Route('login/facebook', function($host, $path) {
+	SU::User()->sso_login('facebook', 'login/facebook/auth');
+});
+SU::Route('login/facebook/auth', function($host, $path) {
+	if (SU::User()->sso_login_auth('facebook', $path)) {
+		// Set success login message
+		SU::Form()->set_message(SU_USER_LOGIN_IDENTITY, 'Login success', 'success');
+	}
+	// Go to root
+	go(c::get('route.base.path'));
+});
+// Example: Login continue
+SU::Route('login/google', function($host, $path) {
+	SU::User()->sso_login('google', 'login/google/auth');
+});
+SU::Route('login/google/auth', function($host, $path) {
+	if (SU::User()->sso_login_auth('google', $path)) {
+		// Set success login message
+		SU::Form()->set_message(SU_USER_LOGIN_IDENTITY, 'Login success', 'success');
+	}
+	// Go to root
+	go(c::get('route.base.path'));
 });
 
 // Example: Logout

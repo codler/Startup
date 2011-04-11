@@ -79,6 +79,30 @@ class SU_User {
 		}
 	}
 	
+	public function sso_login($provider, $redirect_url='') {
+		$domain = 'http://' . c::get('route.base.host');
+		$redirect_url = $domain . '/' . $redirect_url;
+		$sso = new Single_sign_on($provider, $domain, $redirect_url, c::get('fb.id'), c::get('fb.secret'));
+		$sso->login(); // will redirect
+	}
+	
+	public function sso_login_auth($provider, $redirect_url='') {
+		$domain = 'http://' . c::get('route.base.host');
+		$redirect_url = $domain . '/' . $redirect_url;
+		$sso = new Single_sign_on($provider, $domain, $redirect_url, c::get('fb.id'), c::get('fb.secret'));
+		if ($user_info = $sso->return_page()) {
+			#print_r($user_info);
+			$user_info['provider'] = $provider;
+			$validate_func = c::get('user.login.validate.sso');
+			if (is_callable($validate_func) && $user_id = $validate_func($user_info['identity'], $user_info)) {
+				s::set('user.id', $user_id);
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
+	
 	public function logout($all=true) {
 		if ($all) {
 			s::destroy();

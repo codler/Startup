@@ -9,6 +9,14 @@ class security
 		//$this->escape();
 		if ($threshold)
 			$this->session();
+		
+		if (function_exists('sys_getloadavg')) {
+			$load = sys_getloadavg();
+			if ($load[0] > 3) {
+				header('HTTP/1.1 503 Too busy, try again later');
+				die('Server too busy. Please try again later.');
+			}
+		}
 	}
 	function escape() {
 		if (!function_exists("get_magic_quotes_gpc") || !get_magic_quotes_gpc()) {
