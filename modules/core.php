@@ -16,6 +16,9 @@ class SU_Core {
     }
 	
 	public static function view($file, $data=null, $return=false) {
+                
+                $file .= c::get('view.extension','');
+
 		if (is_array($data)) {
 			extract($data);
 		}
