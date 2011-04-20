@@ -98,11 +98,15 @@ class SU_Ui {
 
 
 	// add media files like css or js
-	function add_external($url,$type) {
+	function add_external($url,$type=null) {
 		global $externalResource;
 		
 		if (file_exists(BASE_DIR . $url)) {
 			$url .= '?' . filemtime(BASE_DIR . $url);
+		}
+		
+		if ($type==null) {
+			$type = a::last(explode('.', $url));
 		}
 		
 		switch ($type) {

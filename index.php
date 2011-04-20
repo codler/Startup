@@ -2,7 +2,7 @@
 require_once(dirname(__file__) . '/startup.php');
 
 // Add an external resourse such as js or css file.
-#SU::Ui()->add_external('hej.js', 'js');
+#SU::Ui()->add_external('hej.js');
 
 SU::Route(array(SU_URL_HOST, ''), function($host, $path) {
 	if ($id = s::get('user.id')) {

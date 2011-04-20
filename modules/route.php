@@ -63,8 +63,10 @@ class SU_Route {
 	
 	function call_404($args, $route, $path) {
 		if (self::$calls == 0) {
-			@header("HTTP/1.1 404 Not Found");
+			@header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
+			@header("Status: 404 Not Found");
 			self::_callback($args, $route, $path);
+			echo str_repeat(' ', 512);
 		}
 	}
 	
