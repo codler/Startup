@@ -29,5 +29,18 @@ class SU_Core {
 			return content::end($return);
 		}
 	}
+	
+	/**
+	 * Max uploadable file to server
+	 *
+	 * @require Ui class
+	 * @return int Number of bytes
+	 */
+	function max_upload() {
+		return min(SU::Ui()->to_bytes(ini_get('post_max_size')),
+			SU::Ui()->to_bytes(ini_get('upload_max_filesize')));
+	}
+	
+	
 }
 ?>

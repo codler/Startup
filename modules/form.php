@@ -107,5 +107,118 @@ class SU_Form {
 		}
 		return $html;
 	}
+	
+	/**
+	 * Upload file
+	 *
+	 * @param array $options 
+	 * @return array
+	 */
+	function upload($options) {
+		/* 	
+		$options['field'] // (required) source string
+		$options['path'] // (required) source string
+		*/
+		$options['image'] = (isset($options['image'])) ? $options['image'] : true; // default true
+		$options['max_size'] = (isset($options['max_size'])) ? min($options['max_size'],SU::Core()->max_upload()) : SU::Core()->max_upload(); // default server max upload in bytes
+
+		if (empty($options['field']) || empty($options['path'])) {
+			return array('error' => 'Option field and path is required');
+		}
+		
+		if (!isset($_FILES[$options['field']])) {
+			return array('error' => 'No file was selected');
+		}
+		
+		// validate path
+		$upload_path = $options['path'];
+		$upload_path = rtrim($upload_path, '/').'/';
+		if (@realpath($upload_path) !== false) {
+			$upload_path = str_replace("\\", "/", realpath($upload_path));
+		}
+		if(!file_exists($upload_path)) {
+			if (!@mkdir($upload_path, 0777)) {
+				return array('error' => 'Directory isnt writable');
+			}
+			chmod($upload_path, 0777);
+		}
+		if (!@is_dir($upload_path) || !is_writable($upload_path)) {
+			return array('error' => 'Directory isnt writable');
+		}
+		$upload_path = preg_replace("/(.+?)\/*$/", "\\1/",  $upload_path); // ?
+		
+		
+		// Remapping for loop
+		if (!is_array($_FILES[$options['field']]['tmp_name'])) {
+			$_FILES[$options['field']] = array_map(function ($item) {
+				return array($item);
+			}, $_FILES[$options['field']]);
+		}
+		
+		$success = array();
+		foreach($_FILES[$options['field']]['tmp_name'] AS $key => $value) {
+			// Get upload info
+			$error = $_FILES[$options['field']]['error'][$key];
+			$name = $_FILES[$options['field']]['name'][$key];
+			$tmp_name = $_FILES[$options['field']]['tmp_name'][$key];
+			$size = $_FILES[$options['field']]['size'][$key];
+			$type = $_FILES[$options['field']]['type'][$key];
+			
+			if (!is_uploaded_file($tmp_name) || $error != UPLOAD_ERR_OK) {
+				continue;
+			}
+			
+			$type = preg_replace("/^(.+?);.*$/", "\\1", $type); // ?
+			$type = strtolower(trim(stripslashes($type), '"'));
+			$ext = f::extension($name);
+			$name = f::safe_name(f::name($name));
+			$name = substr($name, 0, 100);
+			
+			// Check allowed file type
+			$image_types = array('gif', 'jpg', 'jpeg', 'png', 'jpe');
+			if ($options['image']) {
+				if (!in_array($ext, ((is_array($options['image'])) ? $options['image'] : $image_types)) || !SU::File()->is_image($type) || getimagesize($tmp_name) === false) {
+					continue;
+				}
+			}
+			
+			// Check file size
+			if ($options['max_size'] < $size) {
+				continue;
+			}
+			
+			// Unique filename
+			if (file_exists($upload_path.$name.".".$ext)) {
+				$number = 1;
+				while (file_exists($upload_path.$name.$number.".".$ext)){
+					$number++;
+				}
+				$name = $name . $number; 
+			}
+			
+			// save
+			if (!@move_uploaded_file($tmp_name, $upload_path.$name.".".$ext)) {
+				continue;
+			}
+			
+			// TODO xss clean
+			
+			
+			
+			$success[] = array(
+				'extension' => $ext,
+				'filename' => $name.".".$ext,
+				'original_filename' => $_FILES[$options['field']]['name'][$key],
+				'name' => $name,
+				'size' => $size,
+				'nice_size' => f::nice_size($size),
+				'md5' => md5(file_get_contents($upload_path.$name.".".$ext))
+			);
+		}
+		return array(
+			'failed' => count($_FILES[$options['field']]['tmp_name']) - count($success),
+			'success' => $success
+		);
+	}
 }
 ?>

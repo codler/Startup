@@ -187,5 +187,25 @@ class SU_Ui {
 	function yesno($string) {
 		return ($string) ? 'Yes' : 'No';
 	}
+	
+	/**
+	 * Converts a value in php.ini to bytes
+	 *
+	 * @param string $val Input example 10M, 1G, 128K
+	 * @return int Number of bytes
+	 */
+	function to_bytes($val) {
+		$last = strtolower($val[strlen($val)-1]);
+		switch($last) {
+			case 'g':
+				$val *= 1024;
+			case 'm':
+				$val *= 1024;
+			case 'k':
+				$val *= 1024;
+		}
+		return $val;
+	}
+	
 }
 ?>
