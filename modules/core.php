@@ -16,16 +16,16 @@ class SU_Core {
     }
 	
 	public static function view($file, $data=null, $return=false) {
-                
-                $file .= c::get('view.extension','');
+
+		$file .= c::get('view.extension','');
 
 		if (is_array($data)) {
 			extract($data);
 		}
-		if (file_exists(BASE_DIR . 'views/' . $file) &&
-			is_file(BASE_DIR . 'views/' . $file)) {
+		if (file_exists(BASE_DIR . c::get('view.path','views') . '/' . $file) &&
+			is_file(BASE_DIR . c::get('view.path','views') . '/' . $file)) {
 			content::start();
-			require(BASE_DIR . 'views/' . $file);
+			require(BASE_DIR . c::get('view.path','views') . '/' . $file);
 			return content::end($return);
 		}
 	}

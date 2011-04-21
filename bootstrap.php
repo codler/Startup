@@ -28,7 +28,7 @@ s::start();
 
 // Preload class
 $preload = array('security', 'route', 'user');
-array_map(SU_autoload, $preload);
+array_map('SU_autoload', $preload);
 
 // Nonce class
 if (file_exists(SU_BASE_DIR . 'libs/nonce.class.php')) {
@@ -41,6 +41,10 @@ if (file_exists(SU_BASE_DIR . 'libs/singlesignon/singlesignon.php')) {
 }
 
 spl_autoload_register('SU_autoload');
-@header('X-Powered-By: https://github.com/codler/Startup');
+if (ini_get('expose_php') == "1") {
+	@header('X-Powered-By: PHP/'.phpversion().' - https://github.com/codler/Startup ('.SU::Core()->version.')');
+} else {
+	@header('X-Powered-By: https://github.com/codler/Startup');
+}
 content::start();
 ?>

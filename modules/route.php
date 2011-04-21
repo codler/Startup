@@ -29,7 +29,7 @@ class SU_Route {
 		}
 		
 		if ($path == '404!') {
-			register_shutdown_function(array('SU_Route', 'call_404'), $args, ($base === SU_URL_HOST || $base == '*') ? SU_ROUTE_HOST : SU_ROUTE_SUB_HOST, $base_path);
+			register_shutdown_function(array($this, 'call_404'), $args, ($base === SU_URL_HOST || $base == '*') ? SU_ROUTE_HOST : SU_ROUTE_SUB_HOST, $base_path);
 		}
 		
 		// replace for regex
