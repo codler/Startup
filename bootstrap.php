@@ -47,4 +47,10 @@ if (ini_get('expose_php') == "1") {
 	@header('X-Powered-By: https://github.com/codler/Startup');
 }
 content::start();
+
+// set default settings
+c::set_default('route.base.path', '/');
+
+c::set_default('view.extension', '');
+c::set_default('view.path', 'views');
 ?>

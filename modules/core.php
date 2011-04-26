@@ -7,26 +7,46 @@ class SU_Core {
 		$reflection = new ReflectionClass('SU_' . $name);
 		return $reflection->newInstanceArgs();
 	}
-
+	
+	/**
+	 * Instantiate SU_X classes
+	 */
 	public static function __callStatic($name, $arguments) {
-		//$name = 'SU_' . $name;
-		//return new $name($arguments);
 		$reflection = new ReflectionClass('SU_' . $name);
-		return $reflection->newInstanceArgs($arguments);
+		
+		/* Bugfix - this if-state is required or you will get this in some server
+		// Fatal error: Uncaught exception 'ReflectionException' with message 'Class SU_X does not have a constructor, so you cannot pass any constructor arguments'
+		 */
+		if ($arguments) {
+			return $reflection->newInstanceArgs($arguments);
+		} else {
+			return $reflection->newInstanceArgs();
+		}
     }
 	
-	public static function view($file, $data=null, $return=false) {
-
-		$file .= c::get('view.extension','');
-
-		if (is_array($data)) {
-			extract($data);
-		}
-		if (file_exists(BASE_DIR . c::get('view.path','views') . '/' . $file) &&
-			is_file(BASE_DIR . c::get('view.path','views') . '/' . $file)) {
+	/**
+	 * Simple View for MVC
+	 * 
+	 * @param string $filename Filename, extension is optional if config view.extension is set
+	 * @param array $data key/value => variablename/variablevalue
+	 * @param boolean $return return or buffer out content
+	 * @return mixed content of file or null
+	 */
+	public static function view($filename, $data=null, $return=false) {
+		$filename .= c::get('view.extension');
+		$f = BASE_DIR . c::get('view.path') . '/' . $filename;
+		
+		if (file_exists($f) && is_file($f)) {
+			// Avoid variable conflict
+			$SU_f = $f;
+			$SU_return = $return;
+			
+			// Set variable in the view file.
+			if (is_array($data)) extract($data);
+			
 			content::start();
-			require(BASE_DIR . c::get('view.path','views') . '/' . $file);
-			return content::end($return);
+			require($SU_f);
+			return content::end($SU_return);
 		}
 	}
 	

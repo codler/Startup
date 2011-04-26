@@ -15,5 +15,5 @@ $form->close();
 
 echo $form->render();
 ?>
-<a href="/login/facebook">Logga in med facebook</a>
-<a href="/login/google">Logga in med google</a>
+<a href="<?php echo c::get('route.base.path'); ?>login/facebook">Logga in med facebook</a>
+<a href="<?php echo c::get('route.base.path'); ?>login/google">Logga in med google</a>

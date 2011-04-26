@@ -8,8 +8,6 @@ defined('SU_ROUTE_SUB_HOST') or define('SU_ROUTE_SUB_HOST', a::first(explode('.'
 
 defined('SU_ROUTE_REQUEST_PATH') or define('SU_ROUTE_REQUEST_PATH', a::first(explode('?', server::get('request_uri'))));
 
-c::set('route.base.path', c::get('route.base.path', '/'));
-
 class SU_Route {
 	public static $calls = 0;
 
@@ -18,8 +16,8 @@ class SU_Route {
 		$args = func_get_args();
 	
 		$base_host = c::get('route.base.host');
-		#$base_path = str_replace(c::get('route.base.path', '/'), '', SU_ROUTE_REQUEST_PATH);
-		$base_path = substr(strstr(SU_ROUTE_REQUEST_PATH, c::get('route.base.path', '/')), strlen(c::get('route.base.path', '/')));
+		#$base_path = str_replace(c::get('route.base.path'), '', SU_ROUTE_REQUEST_PATH);
+		$base_path = substr(strstr(SU_ROUTE_REQUEST_PATH, c::get('route.base.path')), strlen(c::get('route.base.path')));
 		if (is_array($route)) {
 			$base = $route[0];
 			$path = $route[1];

@@ -7,10 +7,10 @@ require_once(dirname(__file__) . '/startup.php');
 SU::Route(array(SU_URL_HOST, ''), function($host, $path) {
 	if ($id = s::get('user.id')) {
 		$data .= 'Logged in as '. $id;
-		$data .= '<a href="http://' . $host . '/logout">Logout</a>';
+		$data .= '<a href="http://' . $host . c::get('route.base.path') . 'logout">Logout</a>';
 	} else {
-		$data .= '<a href="http://' . $host . '/login">Login</a>';
-		$data .= '<a href="http://' . $host . '/register">Register</a>';
+		$data .= '<a href="http://' . $host . c::get('route.base.path') . 'login">Login</a>';
+		$data .= '<a href="http://' . $host . c::get('route.base.path') . 'register">Register</a>';
 	}
 	
 	// test form
