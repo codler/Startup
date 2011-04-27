@@ -4,13 +4,13 @@ require_once(dirname(__file__) . '/startup.php');
 // Add an external resourse such as js or css file.
 #SU::Ui()->add_external('hej.js');
 
-SU::Route(array(SU_URL_HOST, ''), function($host, $path) {
+SU::Route(array(SU_URL_HOST, ''), function($meta, $symbols) {
 	if ($id = s::get('user.id')) {
 		$data .= 'Logged in as '. $id;
-		$data .= '<a href="http://' . $host . c::get('route.base.path') . 'logout">Logout</a>';
+		$data .= '<a href="http://' . $meta['host'] . c::get('route.base.path') . 'logout">Logout</a>';
 	} else {
-		$data .= '<a href="http://' . $host . c::get('route.base.path') . 'login">Login</a>';
-		$data .= '<a href="http://' . $host . c::get('route.base.path') . 'register">Register</a>';
+		$data .= '<a href="http://' . $meta['host'] . c::get('route.base.path') . 'login">Login</a>';
+		$data .= '<a href="http://' . $meta['host'] . c::get('route.base.path') . 'register">Register</a>';
 	}
 	
 	// test form
@@ -36,7 +36,7 @@ SU::Route(array(SU_URL_HOST, ''), function($host, $path) {
 
 
 // Example: Register
-SU::Route(array(SU_URL_HOST, 'register'), function($host, $path) {
+SU::Route(array(SU_URL_HOST, 'register'), function($meta, $symbols) {
 	if (SU::Form()->verify('register')) {
 		if (SU::User()->register()) {
 			SU::Form()->set_message(SU_USER_REGISTER_IDENTITY, 'Register success', 'success');
@@ -63,7 +63,7 @@ SU::Route(array(SU_URL_HOST, 'register'), function($host, $path) {
 });
 
 // Example: Login
-SU::Route('login', function($host, $path) {
+SU::Route('login', function($meta, $symbols) {
 	// Verify form
 	if (SU::Form()->verify('login')) {
 		// Try login
@@ -105,11 +105,11 @@ SU::Route('login', function($host, $path) {
 });
 
 // Example: Login continue
-SU::Route('login/facebook', function($host, $path) {
+SU::Route('login/facebook', function($meta, $symbols) {
 	SU::User()->sso_login('facebook', 'login/facebook/auth');
 });
-SU::Route('login/facebook/auth', function($host, $path) {
-	if (SU::User()->sso_login_auth('facebook', $path)) {
+SU::Route('login/facebook/auth', function($meta, $symbols) {
+	if (SU::User()->sso_login_auth('facebook', $meta['path'])) {
 		// Set success login message
 		SU::Form()->set_message(SU_USER_LOGIN_IDENTITY, 'Login success', 'success');
 	}
@@ -117,11 +117,11 @@ SU::Route('login/facebook/auth', function($host, $path) {
 	go(c::get('route.base.path'));
 });
 // Example: Login continue
-SU::Route('login/google', function($host, $path) {
+SU::Route('login/google', function($meta, $symbols) {
 	SU::User()->sso_login('google', 'login/google/auth');
 });
-SU::Route('login/google/auth', function($host, $path) {
-	if (SU::User()->sso_login_auth('google', $path)) {
+SU::Route('login/google/auth', function($meta, $symbols) {
+	if (SU::User()->sso_login_auth('google', $meta['path'])) {
 		// Set success login message
 		SU::Form()->set_message(SU_USER_LOGIN_IDENTITY, 'Login success', 'success');
 	}
@@ -130,25 +130,38 @@ SU::Route('login/google/auth', function($host, $path) {
 });
 
 // Example: Logout
-SU::Route(array(SU_URL_HOST, 'logout'), function($host, $path) {
+SU::Route(array(SU_URL_HOST, 'logout'), function($meta, $symbols) {
 	s::destroy();
 	// Go to root
 	go(c::get('route.base.path'));
 });
 
 // Main domain
-SU::Route(array(SU_URL_HOST, 'maindomain'), function($host, $path) {
-	echo "Maindomain - " . $host . '/' . $path;
+SU::Route(array(SU_URL_HOST, 'maindomain'), function($meta, $symbols) {
+	echo "Maindomain - " . $meta['host'] . '/' . $meta['path'];
 });
 
 // All subdomain
-SU::Route(array(SU_URL_SUB_HOST, 'subdomain'), function($host, $path) {
-	echo "Subdomain - " . $host . '/' . $path;
+SU::Route(array(SU_URL_SUB_HOST, 'subdomain'), function($meta, $symbols) {
+	echo "Subdomain - " . $meta['host'] . '/' . $meta['path'];
 }); 
 
 // "Wildcard route"
-SU::Route(array('unique', 'id/:id'), function($host, $path) {
-	echo "Path : " . $path; // Will print out eg. "Path : id/1"
+SU::Route(array('unique', 'id/:id'), function($meta, $symbols) {
+	echo print_r($meta, true) . print_r($symbols, true);
+/*
+Array
+(
+    [host] => ply.se
+    [path] => id/30
+)
+Array
+(
+    [0] => id/30
+    [id] => 30
+    [1] => 30
+)
+*/
 });
 
 // Both are same page
@@ -163,23 +176,23 @@ function access() {
 		return false;
 	}
 }
-SU::Route('protected-page', access, function($host, $path) {
+SU::Route('protected-page', access, function($meta, $symbols) {
 	echo "Viewing a protected-page";
 });
 
 // Example: Protected page 2 with redirect back on success login
-function access2($host, $path) {
+function access2($meta, $symbols) {
 	if (!s::get('user.id')) {
 		go('http://' . c::get('route.base.host') . '/login?next=' . urlencode(url::current()));
 		return false;
 	}
 }
-SU::Route('protected-page', access2, function($host, $path) {
+SU::Route('protected-page', access2, function($meta, $symbols) {
 	echo "Viewing a protected-page";
 });
 
 // Custom 404 page
-SU::Route('404!', function($host, $path) {
+SU::Route('404!', function($meta, $symbols) {
 	echo "Page not found";
 });
 

@@ -1,9 +1,9 @@
 # Getting started
 
 1. Download Startup and place it where you want.
-2. Copy startup.php to the root of your project.
-3. Configure settings in startup.php (db, route, facebook, authentication etc). Also make sure it includes right path to bootstrap.php in Startup if you have moved startup.php
-4. Simply include this line of code <code>require_once(dirname(__file__) . '/startup.php');</code> and you are ready to use.
+2. Copy <code>startup.php</code> to the root of your project.
+3. Configure settings in <code>startup.php</code> (db, route, facebook, authentication etc). Also make sure it includes right path to <code>bootstrap.php</code> in Startup if you have moved <code>startup.php</code>
+4. Simply include this line of code in your project <code>require_once(dirname(__file__) . '/startup.php');</code> and you are ready to use.
 
 # Route
 

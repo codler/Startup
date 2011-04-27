@@ -31,30 +31,38 @@ class SU_Route {
 		}
 		
 		// replace for regex
-		$path = str_replace(array('/', ':id'), array('\/', '\d+'), $path);
-		$path = '/^'.$path.'$/i';
+		#$path = str_replace(array('/', ':id'), array('\/', '\d+'), $path);
+		#$path = '/^'.$path.'$/i';
+		// "URL path with symbol" regex match
+		$a = explode('/', $path);
+		foreach($a AS $k => $v) {
+				if (substr($v,0,1) == ':') {
+						$a[$k] = '(?<' . substr($v,1) . '>[^\/]*)';
+				}
+		}
+		$path = '/^' . implode('\/', $a) . '$/i';
 		
 		// Main
 		if ($base === SU_URL_HOST) {
 			if (SU_ROUTE_HOST == $base_host &&
-				preg_match($path, $base_path)) {
-				$this->_callback($args, SU_ROUTE_HOST, $base_path);
+				preg_match($path, $base_path, $matches)) {
+				$this->_callback($args, array('host' => SU_ROUTE_HOST, 'path' => $base_path), $matches);
 			}
 		// All subdomain
 		} elseif ($base === SU_URL_SUB_HOST) {
 			if (SU_ROUTE_SUB_HOST.'.'.$base_host == SU_ROUTE_HOST &&
-				preg_match($path, $base_path)) {
-				$this->_callback($args, SU_ROUTE_SUB_HOST, $base_path);
+				preg_match($path, $base_path, $matches)) {
+				$this->_callback($args, array('host' => SU_ROUTE_SUB_HOST, 'path' => $base_path), $matches);
 			}
 		// Main and subdomain
 		} elseif ($base == '*') {
-			if (preg_match($path, $base_path)) {
-				$this->_callback($args, SU_ROUTE_HOST, $base_path);
+			if (preg_match($path, $base_path, $matches)) {
+				$this->_callback($args, array('host' => SU_ROUTE_HOST, 'path' => $base_path), $matches);
 			}
 		// Specific subdomain
 		} elseif ($base == SU_ROUTE_SUB_HOST) {
-			if (preg_match($path, $base_path)) {
-				$this->_callback($args, SU_ROUTE_SUB_HOST, $base_path);
+			if (preg_match($path, $base_path, $matches)) {
+				$this->_callback($args, array('host' => SU_ROUTE_SUB_HOST, 'path' => $base_path), $matches);
 			}
 		}
 	}
