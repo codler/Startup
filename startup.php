@@ -25,7 +25,7 @@ c::set('fb.secret', '');
 */
 
 // == Route settings ==
-c::set('route.base.host', 'ply.se'); // Hostname
+c::set('route.base.host', 'ply.se'); // Hostname ( and port if it isn't 80 or 443 )
 //c::set('route.base.path', '/index.php/'); // URL Application path
 
 // == Authentication settings ==
