@@ -26,7 +26,9 @@ class SU_Form {
 	function __construct($default_attr=array()) {
 		$this->default_attr = $default_attr;
 	}
-
+	
+	// @param string $name Unique form identifier, used for method verify
+	// Recommend using this instead of making own "<form>"-tag. This provide safety mechanism that will prevent CSRF.
 	function open($name, $location='', $method='post', $attr=array()) {
 		$nonce = (isset($attr['nonce'])) ? Nonce::create($name, $attr['nonce']) : Nonce::create($name);
 		unset($attr['nonce']);
