@@ -1688,8 +1688,9 @@ class str {
 	function urlify($text) {
 		$text = trim($text);
 		$text = str::lower($text);
-		$text = str_replace('ä', 'ae', $text);
-		$text = str_replace('ö', 'oe', $text);
+		$text = str_replace('ä', 'a', $text);
+$text = str_replace('å', 'a', $text);
+		$text = str_replace('ö', 'o', $text);
 		$text = str_replace('ü', 'ue', $text);
 		$text = str_replace('ß', 'ss', $text);
 		$text = preg_replace("![^a-z0-9]!i","-", $text);
