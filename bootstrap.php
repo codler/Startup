@@ -35,9 +35,14 @@ if (file_exists(SU_BASE_DIR . 'libs/nonce.class.php')) {
 	require_once(SU_BASE_DIR . 'libs/nonce.class.php');
 }
 
-// Single Sign On class
+// Single-Sign-On class
 if (file_exists(SU_BASE_DIR . 'libs/singlesignon/singlesignon.php')) {
 	require_once(SU_BASE_DIR . 'libs/singlesignon/singlesignon.php');
+}
+
+// PHPMailer lib
+if (file_exists(SU_BASE_DIR . 'libs/phpmailer/class.phpmailer.php')) {
+	require_once(SU_BASE_DIR . 'libs/phpmailer/class.phpmailer.php');
 }
 
 spl_autoload_register('SU_autoload');

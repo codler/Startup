@@ -196,5 +196,18 @@ SU::Route('404!', function($meta, $symbols) {
 	echo "Page not found";
 });
 
-
+SU::Route('mail', function($meta, $symbols) {
+	// Mail use PHPMailer
+	$mail = SU::Mail();
+	/*
+	$mail->SetFrom('name@yourdomain.com', 'First Last');
+	$mail->AddAddress('recieving@address.com', "John Doe");
+	$mail->Subject    = "PHPMailer Test Subject via mail(), basic";
+	$mail->MsgHTML("This is a test message");
+	if(!$mail->Send()) {
+		echo "Mailer Error: " . $mail->ErrorInfo;
+	} else {
+		echo "Message sent!";
+	}*/
+});
 ?>
