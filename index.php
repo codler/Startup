@@ -4,6 +4,10 @@ require_once(dirname(__file__) . '/startup.php');
 // Add an external resourse such as js or css file.
 #SU::Ui()->add_external('hej.js');
 
+// Image use PHPThumb
+#$img = SU::Image('Penguins.jpg'); // This equals PhpThumbFactory::create('Penguins.jpg')
+#$img->save('new.jpg');
+
 SU::Route(array(SU_URL_HOST, ''), function($meta, $symbols) {
 	if ($id = s::get('user.id')) {
 		$data .= 'Logged in as '. $id;

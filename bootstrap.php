@@ -45,6 +45,11 @@ if (file_exists(SU_BASE_DIR . 'libs/phpmailer/class.phpmailer.php')) {
 	require_once(SU_BASE_DIR . 'libs/phpmailer/class.phpmailer.php');
 }
 
+// PHPThumb lib
+if (file_exists(SU_BASE_DIR . 'libs/phpthumb/ThumbLib.inc.php')) {
+	require_once(SU_BASE_DIR . 'libs/phpthumb/ThumbLib.inc.php');
+}
+
 spl_autoload_register('SU_autoload');
 if (ini_get('expose_php') == "1") {
 	@header('X-Powered-By: PHP/'.phpversion().' - https://github.com/codler/Startup ('.SU::Core()->version.')');
