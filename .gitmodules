@@ -1,0 +1,3 @@
+[submodule "libs/kirby"]
+	path = libs/kirby
+	url = git://github.com/codler/kirby.git
