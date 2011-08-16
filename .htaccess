@@ -27,4 +27,6 @@ RewriteRule . index.php [L]
 <IfModule php5_module>
 # security
 php_value session.cookie_httponly true
+# Same session on all subdomain
+#php_value session.cookie_domain .domain.se
 </IfModule>
